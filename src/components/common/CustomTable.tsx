@@ -28,10 +28,10 @@ export function CustomTable<T extends { id?: string | number }>({
   pagination,
 }: CustomTableProps<T>) {
   return (
-    <div className="w-full bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+    <div className="w-full bg-white rounded-md border border-slate-200 overflow-hidden flex flex-col">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs text-slate-600">
-          <thead className="bg-slate-50/80 text-slate-700 font-semibold uppercase tracking-wider border-b border-slate-100">
+          <thead className="bg-slate-50/50 text-[11px] text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-100">
             <tr>
               {columns.map((col, idx) => (
                 <th key={idx} className={`px-6 py-3.5 ${col.className || ''}`}>
@@ -81,14 +81,14 @@ export function CustomTable<T extends { id?: string | number }>({
             <button
               onClick={() => pagination.onPageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="w-4 h-4 text-slate-600" />
             </button>
             <button
               onClick={() => pagination.onPageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
-              className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="w-4 h-4 text-slate-600" />
             </button>

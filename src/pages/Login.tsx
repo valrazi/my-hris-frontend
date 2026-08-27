@@ -56,66 +56,63 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-        {/* Header Branding */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md mb-4">
-            <Building2 className="w-8 h-8 text-white" />
+      <div className="w-full max-w-md bg-white rounded-md border border-slate-200 p-8 shadow-sm">
+        {/* Branding header */}
+        <div className="mb-6 flex flex-col items-center">
+          <div className="w-10 h-10 rounded-md bg-slate-900 flex items-center justify-center text-white mb-3">
+            <Building2 className="w-5 h-5" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">WFH Attendance System</h1>
-          <p className="text-blue-100 text-sm mt-1">Sign in to your corporate portal</p>
+          <h1 className="text-xl font-semibold text-slate-900">WFH Portal</h1>
+          <p className="text-xs text-slate-500 mt-1">Sign in to your employee account</p>
         </div>
 
-        {/* Form Container */}
-        <div className="p-8">
-          {errorMessage && (
-            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-700 text-sm">
-              <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5" />
-              <div>{errorMessage}</div>
-            </div>
-          )}
+        {errorMessage && (
+          <div className="mb-5 p-3 rounded-md bg-red-50 border border-red-100 flex items-start gap-2.5 text-red-700 text-xs">
+            <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
+            <div>{errorMessage}</div>
+          </div>
+        )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <InputField
-              label="Work Email"
-              type="email"
-              placeholder="name@company.com"
-              leftIcon={<Mail className="w-4 h-4" />}
-              error={errors.email?.message}
-              {...register('email')}
-            />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <InputField
+            label="Work Email"
+            type="email"
+            placeholder="name@company.com"
+            leftIcon={<Mail className="w-4 h-4 text-slate-400" />}
+            error={errors.email?.message}
+            {...register('email')}
+          />
 
-            <InputField
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              leftIcon={<Lock className="w-4 h-4" />}
-              error={errors.password?.message}
-              {...register('password')}
-            />
+          <InputField
+            label="Password"
+            type="password"
+            placeholder="••••••••"
+            leftIcon={<Lock className="w-4 h-4 text-slate-400" />}
+            error={errors.password?.message}
+            {...register('password')}
+          />
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-              isLoading={isSubmitting}
-            >
-              Sign In to Account
-            </Button>
-          </form>
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            className="w-full mt-2"
+            isLoading={isSubmitting}
+          >
+            Sign In
+          </Button>
+        </form>
 
-          {/* Preset Helper Credentials */}
-          <div className="mt-8 pt-6 border-t border-slate-100 text-xs text-slate-500 space-y-2">
-            <p className="font-semibold text-slate-700">Demo Accounts:</p>
-            <div className="flex justify-between bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
-              <span className="font-medium text-slate-600">HR Admin:</span>
-              <span className="font-mono text-blue-600">admin@example.com</span>
-            </div>
-            <div className="flex justify-between bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
-              <span className="font-medium text-slate-600">Employee:</span>
-              <span className="font-mono text-blue-600">employee@example.com</span>
-            </div>
+        {/* Helper Credentials */}
+        <div className="mt-6 pt-6 border-t border-slate-100 text-xs text-slate-500 space-y-2">
+          <p className="font-medium text-slate-700">Demo Accounts:</p>
+          <div className="flex justify-between bg-slate-50 p-2 rounded-md border border-slate-100">
+            <span className="text-slate-600 font-medium">HR Admin:</span>
+            <span className="font-mono text-slate-800">admin@example.com</span>
+          </div>
+          <div className="flex justify-between bg-slate-50 p-2 rounded-md border border-slate-100">
+            <span className="text-slate-600 font-medium">Employee:</span>
+            <span className="font-mono text-slate-800">employee@example.com</span>
           </div>
         </div>
       </div>

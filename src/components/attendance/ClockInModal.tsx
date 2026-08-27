@@ -134,19 +134,19 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({ isOpen, onClose }) =
     <Modal isOpen={isOpen} onClose={onClose} title="WFH Attendance Clock-In" maxWidth="lg">
       <form onSubmit={handleSubmit} className="space-y-5">
         {submitError && (
-          <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-md bg-red-50 border border-red-100 text-red-700 text-xs flex items-center gap-2">
             <ShieldAlert className="w-4 h-4 shrink-0" />
             <span>{submitError}</span>
           </div>
         )}
 
         {/* Mode Selector Tabs */}
-        <div className="flex rounded-lg bg-slate-100 p-1">
+        <div className="flex rounded-md bg-slate-100 p-1">
           <button
             type="button"
             onClick={() => { setMode('camera'); resetPhoto(); }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
-              mode === 'camera' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              mode === 'camera' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Camera className="w-3.5 h-3.5" />
@@ -156,7 +156,7 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({ isOpen, onClose }) =
             type="button"
             onClick={() => { setMode('upload'); resetPhoto(); }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
-              mode === 'upload' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+              mode === 'upload' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Upload className="w-3.5 h-3.5" />
@@ -165,7 +165,7 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({ isOpen, onClose }) =
         </div>
 
         {/* Photo View / Camera Screen */}
-        <div className="relative rounded-xl overflow-hidden bg-slate-900 aspect-video flex items-center justify-center border border-slate-200">
+        <div className="relative rounded-md overflow-hidden bg-slate-950 aspect-video flex items-center justify-center border border-slate-100">
           {previewUrl ? (
             <img src={previewUrl} alt="Captured WFH Selfie" className="w-full h-full object-cover" />
           ) : mode === 'camera' ? (
@@ -178,8 +178,8 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({ isOpen, onClose }) =
             )
           ) : (
             <div className="text-center p-6">
-              <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-              <label className="cursor-pointer text-xs text-blue-400 font-semibold hover:underline">
+              <Upload className="w-8 h-8 text-slate-500 mx-auto mb-2" />
+              <label className="cursor-pointer text-xs text-slate-600 font-semibold hover:underline">
                 Choose a selfie photo file
                 <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
               </label>
@@ -209,7 +209,7 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({ isOpen, onClose }) =
 
         {/* Work Notes */}
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
             WFH Work Notes / Today's Objectives
           </label>
           <textarea
@@ -217,7 +217,7 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({ isOpen, onClose }) =
             value={workNotes}
             onChange={(e) => setWorkNotes(e.target.value)}
             placeholder="Describe the tasks you are working on today from home..."
-            className="w-full rounded-lg border border-slate-300 p-2.5 text-xs text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-200 p-2.5 text-xs text-slate-900 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 focus:outline-none"
           />
         </div>
 
@@ -233,7 +233,7 @@ export const ClockInModal: React.FC<ClockInModalProps> = ({ isOpen, onClose }) =
             disabled={!photoFile}
             leftIcon={<CheckCircle2 className="w-4 h-4" />}
           >
-            Confirm & Submit Clock-In
+            Confirm Clock-In
           </Button>
         </div>
       </form>

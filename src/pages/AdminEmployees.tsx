@@ -134,11 +134,11 @@ export const AdminEmployees: React.FC = () => {
       header: 'Employee Name',
       accessor: (item) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 font-semibold text-xs flex items-center justify-center border border-slate-200">
             {item.firstName[0]}
           </div>
           <div>
-            <div className="font-bold text-slate-900">{item.firstName} {item.lastName}</div>
+            <div className="font-semibold text-slate-900">{item.firstName} {item.lastName}</div>
             <div className="text-[11px] text-slate-500">{item.email}</div>
           </div>
         </div>
@@ -159,8 +159,8 @@ export const AdminEmployees: React.FC = () => {
     {
       header: 'Role',
       accessor: (item) => (
-        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-          item.role === 'ADMIN' ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-blue-50 text-blue-700 border border-blue-200'
+        <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
+          item.role === 'ADMIN' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
         }`}>
           {item.role}
         </span>
@@ -169,7 +169,7 @@ export const AdminEmployees: React.FC = () => {
     {
       header: 'Status',
       accessor: (item) => (
-        <span className={`inline-flex items-center gap-1 text-[11px] font-semibold ${item.isActive ? 'text-emerald-600' : 'text-slate-400'}`}>
+        <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${item.isActive ? 'text-emerald-600' : 'text-slate-400'}`}>
           {item.isActive ? <UserCheck className="w-3.5 h-3.5" /> : <UserX className="w-3.5 h-3.5" />}
           {item.isActive ? 'Active' : 'Inactive'}
         </span>
@@ -178,20 +178,20 @@ export const AdminEmployees: React.FC = () => {
     {
       header: 'Actions',
       accessor: (item) => (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={() => openEditModal(item)}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            className="p-1 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             title="Edit Employee"
           >
-            <Edit2 className="w-4 h-4" />
+            <Edit2 className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setDeletingEmployee(item)}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-1 rounded-md text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
             title="Deactivate Employee"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
       ),
@@ -203,7 +203,7 @@ export const AdminEmployees: React.FC = () => {
       {/* Top Title & Add Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">HR Employee Master Data</h1>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">HR Employee Master Data</h1>
           <p className="text-xs text-slate-500 mt-1">Manage corporate employee profiles, departments, and credentials</p>
         </div>
 
@@ -211,20 +211,19 @@ export const AdminEmployees: React.FC = () => {
           variant="primary"
           onClick={openAddModal}
           leftIcon={<Plus className="w-4 h-4" />}
-          className="bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20"
         >
           Add New Employee
         </Button>
       </div>
 
       {/* Filter Controls Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center gap-3">
+      <div className="bg-white p-4 rounded-md border border-slate-200 flex flex-col sm:flex-row items-center gap-3">
         <div className="w-full sm:w-72">
           <InputField
             placeholder="Search by name, email, NIK..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            leftIcon={<Search className="w-4 h-4" />}
+            leftIcon={<Search className="w-4 h-4 text-slate-400" />}
           />
         </div>
 
@@ -232,7 +231,7 @@ export const AdminEmployees: React.FC = () => {
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 py-2.5 px-3 text-xs text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-md border border-slate-200 py-2 px-3 text-xs text-slate-700 bg-white focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
           >
             <option value="">All Departments</option>
             <option value="Engineering">Engineering</option>
@@ -261,7 +260,7 @@ export const AdminEmployees: React.FC = () => {
       <Modal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} title="Add New Employee Record" maxWidth="lg">
         <form onSubmit={handleSubmit(onAddSubmit)} className="space-y-4">
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+            <div className="p-3 rounded-md bg-red-50 border border-red-100 text-red-700 text-xs flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
@@ -285,10 +284,10 @@ export const AdminEmployees: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <InputField label="Initial Password" type="password" error={errors.password?.message} {...register('password')} />
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Role</label>
+              <label className="block text-xs font-medium text-slate-600 mb-1.5">Role</label>
               <select
                 {...register('role')}
-                className="w-full rounded-lg border border-slate-300 py-2.5 px-3 text-xs text-slate-900 bg-white"
+                className="w-full rounded-md border border-slate-200 py-2 px-3 text-xs text-slate-900 bg-white focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
               >
                 <option value="EMPLOYEE">EMPLOYEE</option>
                 <option value="ADMIN">ADMIN</option>
@@ -307,7 +306,7 @@ export const AdminEmployees: React.FC = () => {
       <Modal isOpen={!!editingEmployee} onClose={() => setEditingEmployee(null)} title="Edit Employee Master Data" maxWidth="lg">
         <form onSubmit={handleSubmit(onEditSubmit)} className="space-y-4">
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+            <div className="p-3 rounded-md bg-red-50 border border-red-100 text-red-700 text-xs flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
@@ -339,7 +338,7 @@ export const AdminEmployees: React.FC = () => {
       <Modal isOpen={!!deletingEmployee} onClose={() => setDeletingEmployee(null)} title="Deactivate Employee Record" maxWidth="md">
         <div className="space-y-4">
           <p className="text-xs text-slate-600">
-            Are you sure you want to deactivate <span className="font-bold text-slate-900">{deletingEmployee?.firstName} {deletingEmployee?.lastName}</span>? The employee will no longer be able to log in or submit attendance.
+            Are you sure you want to deactivate <span className="font-semibold text-slate-900">{deletingEmployee?.firstName} {deletingEmployee?.lastName}</span>? The employee will no longer be able to log in or submit attendance.
           </p>
           <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
             <Button variant="outline" onClick={() => setDeletingEmployee(null)}>Cancel</Button>

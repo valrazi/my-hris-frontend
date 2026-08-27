@@ -19,10 +19,10 @@ export const Navbar: React.FC = () => {
           {/* Brand Logo */}
           <div className="flex items-center gap-8">
             <Link to={isAdmin ? '/admin/employees' : '/dashboard'} className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-                <Building2 className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-md bg-slate-900 flex items-center justify-center text-white">
+                <Building2 className="w-4 h-4" />
               </div>
-              <span className="font-bold text-slate-900 text-lg tracking-tight">WFH Portal</span>
+              <span className="font-bold text-slate-900 text-base tracking-tight">WFH Portal</span>
             </Link>
 
             {/* Navigation Links */}
@@ -30,9 +30,9 @@ export const Navbar: React.FC = () => {
               {!isAdmin && (
                 <Link
                   to="/dashboard"
-                  className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                  className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-2 ${
                     location.pathname === '/dashboard'
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-slate-100 text-slate-900'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
@@ -45,9 +45,9 @@ export const Navbar: React.FC = () => {
                 <>
                   <Link
                     to="/admin/employees"
-                    className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-2 ${
                       location.pathname === '/admin/employees'
-                        ? 'bg-blue-50 text-blue-700'
+                        ? 'bg-slate-100 text-slate-900'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
@@ -57,9 +57,9 @@ export const Navbar: React.FC = () => {
 
                   <Link
                     to="/admin/attendance"
-                    className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-2 ${
                       location.pathname === '/admin/attendance'
-                        ? 'bg-blue-50 text-blue-700'
+                        ? 'bg-slate-100 text-slate-900'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
@@ -74,14 +74,14 @@ export const Navbar: React.FC = () => {
           {/* User Profile & Logout */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-semibold text-sm">
-                {user.firstName ? user.firstName[0].toUpperCase() : <UserIcon className="w-4 h-4" />}
+              <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-semibold text-xs">
+                {user.firstName ? user.firstName[0].toUpperCase() : <UserIcon className="w-3.5 h-3.5" />}
               </div>
               <div className="hidden sm:block text-left">
-                <div className="text-sm font-semibold text-slate-900 leading-none mb-1">
+                <div className="text-xs font-semibold text-slate-900 leading-none mb-1">
                   {user.firstName} {user.lastName}
                 </div>
-                <div className="text-xs text-slate-500 font-medium">
+                <div className="text-[10px] text-slate-500 font-medium">
                   {user.role === 'ADMIN' ? 'HR Administrator' : user.position || 'Employee'}
                 </div>
               </div>
@@ -91,8 +91,7 @@ export const Navbar: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={logout}
-              leftIcon={<LogOut className="w-3.5 h-3.5 text-slate-500" />}
-              className="text-slate-600 border-slate-200 hover:bg-slate-100"
+              leftIcon={<LogOut className="w-3.5 h-3.5" />}
             >
               Sign Out
             </Button>
