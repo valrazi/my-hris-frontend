@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { Calendar, Clock, LogIn, LogOut, CheckCircle, AlertCircle, Image as ImageIcon, LogOut as LogOutIcon } from 'lucide-react';
+import { Calendar, Clock, LogIn, LogOut, CheckCircle, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useTodayStatus, useMyAttendanceHistory, useClockOut } from '../hooks/useAttendance';
+import { useTodayStatus, useMyAttendanceHistory } from '../hooks/useAttendance';
 import { Button } from '../components/common/Button';
-import { Modal } from '../components/common/Modal';
 import { ClockInModal } from '../components/attendance/ClockInModal';
+import { ClockOutModal } from '../components/attendance/ClockOutModal';
+import { AttendanceRecord } from '../types';
 
 export const EmployeeDashboard: React.FC = () => {
   const { user } = useAuth();
   const [now, setNow] = useState(dayjs());
   const [isClockInOpen, setIsClockInOpen] = useState(false);
-  const [clockOutNotes, setClockOutNotes] = useState('');
   const [isClockOutOpen, setIsClockOutOpen] = useState(false);
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
+  const [activePhotoTab, setActivePhotoTab] = useState<'in' | 'out'>('in');
 
   // Live Clock Ticker
   useEffect(() => {
@@ -23,14 +24,10 @@ export const EmployeeDashboard: React.FC = () => {
 
   const { data: todayStatus, isLoading: isTodayLoading } = useTodayStatus();
   const { data: historyData, isLoading: isHistoryLoading } = useMyAttendanceHistory(1, 10);
-  const clockOutMutation = useClockOut();
 
-  const handleClockOut = async () => {
-    try {
-      await clockOutMutation.mutateAsync(clockOutNotes);
-      setIsClockOutOpen(false);
-      setClockOutNotes('');
-    } catch (err) {}
+  const openPhotoModal = (record: AttendanceRecord, tab: 'in' | 'out' = 'in') => {
+    setSelectedRecord(record);
+    setActivePhotoTab(tab);
   };
 
   return (
@@ -130,7 +127,7 @@ export const EmployeeDashboard: React.FC = () => {
                 <th className="px-6 py-3.5">Clock Out</th>
                 <th className="px-6 py-3.5">Status</th>
                 <th className="px-6 py-3.5">Duration</th>
-                <th className="px-6 py-3.5">Photo Proof</th>
+                <th className="px-6 py-3.5">Selfie Proofs</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -171,17 +168,27 @@ export const EmployeeDashboard: React.FC = () => {
                       {record.durationMinutes ? `${Math.floor(record.durationMinutes / 60)}h ${record.durationMinutes % 60}m` : '-'}
                     </td>
                     <td className="px-6 py-4">
-                      {record.photoUrl ? (
-                        <button
-                          onClick={() => setSelectedPhoto(record.photoUrl)}
-                          className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-medium"
-                        >
-                          <ImageIcon className="w-4 h-4" />
-                          View Photo
-                        </button>
-                      ) : (
-                        '-'
-                      )}
+                      <div className="flex items-center gap-2">
+                        {record.photoUrl && (
+                          <button
+                            onClick={() => openPhotoModal(record, 'in')}
+                            className="flex items-center gap-1 text-slate-600 hover:text-slate-900 font-medium bg-slate-50 hover:bg-slate-100 px-2 py-1 rounded border border-slate-200"
+                          >
+                            <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
+                            Clock-In
+                          </button>
+                        )}
+                        {record.clockOutPhotoUrl && (
+                          <button
+                            onClick={() => openPhotoModal(record, 'out')}
+                            className="flex items-center gap-1 text-slate-600 hover:text-slate-900 font-medium bg-slate-50 hover:bg-slate-100 px-2 py-1 rounded border border-slate-200"
+                          >
+                            <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
+                            Clock-Out
+                          </button>
+                        )}
+                        {!record.photoUrl && !record.clockOutPhotoUrl && '-'}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -194,40 +201,63 @@ export const EmployeeDashboard: React.FC = () => {
       {/* Clock In Modal Component */}
       <ClockInModal isOpen={isClockInOpen} onClose={() => setIsClockInOpen(false)} />
 
-      {/* Clock Out Confirmation Modal */}
-      <Modal isOpen={isClockOutOpen} onClose={() => setIsClockOutOpen(false)} title="End Work Shift (Clock Out)" maxWidth="md">
-        <div className="space-y-4">
-          <p className="text-xs text-slate-600">
-            Are you sure you want to end your work shift for today? You can optionally add an end-of-day work completion summary below:
-          </p>
-          <textarea
-            rows={3}
-            value={clockOutNotes}
-            onChange={(e) => setClockOutNotes(e.target.value)}
-            placeholder="End of day work summary..."
-            className="w-full rounded-md border border-slate-200 p-2.5 text-xs text-slate-900 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 focus:outline-none"
-          />
-          <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => setIsClockOutOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              isLoading={clockOutMutation.isPending}
-              onClick={handleClockOut}
-              leftIcon={<LogOutIcon className="w-4 h-4" />}
-            >
-              Confirm Clock Out
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      {/* Clock Out Modal Component */}
+      <ClockOutModal isOpen={isClockOutOpen} onClose={() => setIsClockOutOpen(false)} />
 
       {/* Photo Lightbox Modal */}
-      {selectedPhoto && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4" onClick={() => setSelectedPhoto(null)}>
-          <div className="relative max-w-xl w-full bg-white rounded-md p-2 shadow-lg">
-            <img src={selectedPhoto} alt="WFH Proof" className="w-full h-auto rounded-md max-h-[80vh] object-contain" />
+      {selectedRecord && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-center justify-center p-4" onClick={() => setSelectedRecord(null)}>
+          <div className="relative max-w-xl w-full bg-white rounded-md p-4 shadow-lg" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+              <h3 className="text-sm font-semibold text-slate-900">
+                WFH Attendance Photo Proof ({dayjs(selectedRecord.date).format('MMMM D, YYYY')})
+              </h3>
+              <button
+                onClick={() => setSelectedRecord(null)}
+                className="text-slate-400 hover:text-slate-600 text-xs font-bold px-2 py-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Photo Tabs if both available */}
+            {selectedRecord.clockOutPhotoUrl && (
+              <div className="flex rounded-md bg-slate-100 p-1 mb-3">
+                <button
+                  type="button"
+                  onClick={() => setActivePhotoTab('in')}
+                  className={`flex-1 py-1 text-xs font-semibold rounded-md transition-all ${
+                    activePhotoTab === 'in' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Clock-In Selfie
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePhotoTab('out')}
+                  className={`flex-1 py-1 text-xs font-semibold rounded-md transition-all ${
+                    activePhotoTab === 'out' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Clock-Out Selfie
+                </button>
+              </div>
+            )}
+
+            <div className="rounded-md overflow-hidden bg-slate-950 aspect-video flex items-center justify-center">
+              <img
+                src={activePhotoTab === 'in' ? selectedRecord.photoUrl : (selectedRecord.clockOutPhotoUrl || selectedRecord.photoUrl)}
+                alt="WFH Proof"
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            {selectedRecord.workNotes && (
+              <div className="mt-3 p-3 bg-slate-50 rounded-md border border-slate-100 text-xs text-slate-700 whitespace-pre-line">
+                <span className="font-semibold block text-slate-900 mb-1">Work Notes:</span>
+                {selectedRecord.workNotes}
+              </div>
+            )}
           </div>
         </div>
       )}

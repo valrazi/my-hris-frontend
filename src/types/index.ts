@@ -69,6 +69,8 @@ export interface AttendanceRecord {
   clockOutTime?: string;
   photoUrl: string;
   photoFileKey?: string;
+  clockOutPhotoUrl?: string;
+  clockOutPhotoFileKey?: string;
   workNotes?: string;
   status: AttendanceStatus;
   locationLatitude?: number;

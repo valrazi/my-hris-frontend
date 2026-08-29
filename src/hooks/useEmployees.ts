@@ -35,8 +35,13 @@ export const useGetEmployees = (params: EmployeeFilterParams = {}) => {
   return useQuery({
     queryKey: ['employees', page, limit, search, department, nik],
     queryFn: async () => {
+      const cleanParams: Record<string, any> = { page, limit };
+      if (department) cleanParams.department = department;
+      if (nik) cleanParams.nik = nik;
+      if (search && search.trim() !== '') cleanParams.search = search.trim();
+
       const res = await api.get<ApiResponse<PaginatedResult<User>>>('/employees', {
-        params: { page, limit, search, department, nik },
+        params: cleanParams,
       });
       return res.data.data;
     },

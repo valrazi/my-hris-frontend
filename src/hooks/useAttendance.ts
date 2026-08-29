@@ -51,20 +51,13 @@ export const useClockIn = () => {
       // Step A & B: Direct Presigned S3/R2 Upload
       const directUpload = await uploadPhotoViaPresignedUrl(payload.photoFile);
 
-      // Step C: Send clock-in payload to backend Gateway
-      const formData = new FormData();
-      formData.append('photo', payload.photoFile);
-      formData.append('photoUrl', directUpload.photoUrl);
-      formData.append('fileKey', directUpload.fileKey);
-
-      if (payload.workNotes) formData.append('workNotes', payload.workNotes);
-      if (payload.locationLatitude) formData.append('locationLatitude', String(payload.locationLatitude));
-      if (payload.locationLongitude) formData.append('locationLongitude', String(payload.locationLongitude));
-
-      const res = await api.post<ApiResponse<AttendanceRecord>>('/attendance/clock-in', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      // Step C: Send clock-in payload to backend Gateway as JSON
+      const res = await api.post<ApiResponse<AttendanceRecord>>('/attendance/clock-in', {
+        photoUrl: directUpload.photoUrl,
+        fileKey: directUpload.fileKey,
+        workNotes: payload.workNotes,
+        locationLatitude: payload.locationLatitude,
+        locationLongitude: payload.locationLongitude,
       });
 
       return res.data.data;
@@ -75,13 +68,28 @@ export const useClockIn = () => {
   });
 };
 
+export interface ClockOutPayload {
+  photoFile: File;
+  workSummary?: string;
+  locationLatitude?: number;
+  locationLongitude?: number;
+}
+
 export const useClockOut = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (workSummary?: string) => {
+    mutationFn: async (payload: ClockOutPayload) => {
+      // Step A & B: Direct Presigned S3/R2 Upload for Clock-Out Photo
+      const directUpload = await uploadPhotoViaPresignedUrl(payload.photoFile);
+
+      // Step C: Submit clock-out payload to backend Gateway as JSON
       const res = await api.post<ApiResponse<AttendanceRecord>>('/attendance/clock-out', {
-        workSummary,
+        photoUrl: directUpload.photoUrl,
+        fileKey: directUpload.fileKey,
+        workSummary: payload.workSummary,
+        locationLatitude: payload.locationLatitude,
+        locationLongitude: payload.locationLongitude,
       });
       return res.data.data;
     },

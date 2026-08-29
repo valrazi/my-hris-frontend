@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import {
   Users,
-  UserCheck,
-  Clock,
+  CheckCircle2,
+  AlertTriangle,
   UserX,
   Search,
   MapPin,
   FileText,
+  Image as ImageIcon,
 } from 'lucide-react';
-import { Column, CustomTable } from '../components/common/CustomTable';
+import { CustomTable, Column } from '../components/common/CustomTable';
 import { InputField } from '../components/common/InputField';
 import { Modal } from '../components/common/Modal';
 import { useAdminAttendanceLogs, useAdminAttendanceSummary } from '../hooks/useAdminAttendance';
@@ -21,6 +22,7 @@ export const AdminAttendance: React.FC = () => {
   const [status, setStatus] = useState('');
   const [department, setDepartment] = useState('');
   const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
+  const [activePhotoTab, setActivePhotoTab] = useState<'in' | 'out'>('in');
 
   const { data: logsData, isLoading } = useAdminAttendanceLogs({
     page,
@@ -31,6 +33,11 @@ export const AdminAttendance: React.FC = () => {
   });
 
   const { data: summary } = useAdminAttendanceSummary();
+
+  const openInspection = (item: AttendanceRecord, tab: 'in' | 'out' = 'in') => {
+    setSelectedRecord(item);
+    setActivePhotoTab(tab);
+  };
 
   const columns: Column<AttendanceRecord>[] = [
     {
@@ -86,24 +93,44 @@ export const AdminAttendance: React.FC = () => {
       ),
     },
     {
-      header: 'Photo Proof',
+      header: 'Photo Proofs',
       accessor: (item) => (
         <div className="flex items-center gap-2">
           {item.photoUrl ? (
             <button
-              onClick={() => setSelectedRecord(item)}
-              className="flex items-center gap-2 group text-left"
+              onClick={() => openInspection(item, 'in')}
+              className="flex items-center gap-1.5 group text-left bg-slate-50 hover:bg-slate-100 p-1 rounded border border-slate-200 transition-colors"
+              title="View Clock-In Selfie"
             >
               <img
                 src={item.photoUrl}
-                alt="Selfie Thumbnail"
-                className="w-8 h-8 rounded-md object-cover border border-slate-200 group-hover:opacity-80 transition-opacity"
+                alt="Clock In Selfie"
+                className="w-7 h-7 rounded object-cover border border-slate-200"
               />
-              <span className="text-xs text-slate-600 group-hover:text-slate-900 group-hover:underline font-medium hidden sm:inline">
-                Inspect Proof
+              <span className="text-[11px] text-slate-600 font-medium hidden sm:inline">
+                In
               </span>
             </button>
-          ) : (
+          ) : null}
+
+          {item.clockOutPhotoUrl ? (
+            <button
+              onClick={() => openInspection(item, 'out')}
+              className="flex items-center gap-1.5 group text-left bg-slate-50 hover:bg-slate-100 p-1 rounded border border-slate-200 transition-colors"
+              title="View Clock-Out Selfie"
+            >
+              <img
+                src={item.clockOutPhotoUrl}
+                alt="Clock Out Selfie"
+                className="w-7 h-7 rounded object-cover border border-slate-200"
+              />
+              <span className="text-[11px] text-slate-600 font-medium hidden sm:inline">
+                Out
+              </span>
+            </button>
+          ) : null}
+
+          {!item.photoUrl && !item.clockOutPhotoUrl && (
             <span className="text-slate-400 text-xs">No Photo</span>
           )}
         </div>
@@ -119,34 +146,34 @@ export const AdminAttendance: React.FC = () => {
         <p className="text-xs text-slate-500 mt-1">Real-time control & WFH photo proof verification of submitted employee attendances</p>
       </div>
 
-      {/* KPI Dashboard Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* KPI Overview Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-md border border-slate-200 flex items-center gap-4">
           <div className="w-9 h-9 rounded-md bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center shrink-0">
             <Users className="w-4.5 h-4.5" />
           </div>
           <div>
-            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Total Employees</div>
+            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Total Headcount</div>
             <div className="text-lg font-bold text-slate-900 mt-0.5">{summary?.totalEmployees || 0}</div>
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-md border border-slate-200 flex items-center gap-4">
           <div className="w-9 h-9 rounded-md bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-            <UserCheck className="w-4.5 h-4.5" />
+            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" />
           </div>
           <div>
-            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Clocked In Today</div>
+            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Present Today</div>
             <div className="text-lg font-bold text-slate-900 mt-0.5">{summary?.presentCount || 0}</div>
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-md border border-slate-200 flex items-center gap-4">
           <div className="w-9 h-9 rounded-md bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-            <Clock className="w-4.5 h-4.5" />
+            <AlertTriangle className="w-4.5 h-4.5 text-amber-500" />
           </div>
           <div>
-            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Late Today</div>
+            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Late Check-ins</div>
             <div className="text-lg font-bold text-slate-900 mt-0.5">{summary?.lateCount || 0}</div>
           </div>
         </div>
@@ -222,9 +249,35 @@ export const AdminAttendance: React.FC = () => {
           maxWidth="xl"
         >
           <div className="space-y-4">
+            {/* Photo Switcher Tabs */}
+            {selectedRecord.clockOutPhotoUrl && (
+              <div className="flex rounded-md bg-slate-100 p-1">
+                <button
+                  type="button"
+                  onClick={() => setActivePhotoTab('in')}
+                  className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
+                    activePhotoTab === 'in' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  Clock-In Selfie
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActivePhotoTab('out')}
+                  className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
+                    activePhotoTab === 'out' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" />
+                  Clock-Out Selfie
+                </button>
+              </div>
+            )}
+
             <div className="rounded-md overflow-hidden bg-slate-950 aspect-video flex items-center justify-center border border-slate-200">
               <img
-                src={selectedRecord.photoUrl}
+                src={activePhotoTab === 'in' ? selectedRecord.photoUrl : (selectedRecord.clockOutPhotoUrl || selectedRecord.photoUrl)}
                 alt="Full WFH Photo Proof"
                 className="w-full h-full object-contain"
               />
